@@ -856,9 +856,9 @@
     }
     async function runReloadSteps(){
       resetReloadUI();
-      els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(900);
-      els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(1100);
-      els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(1200);
+     els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(1400);
+     els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(1600);
+     els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(1800);
       window.location.href = window.location.pathname + "?v=" + Date.now();
     }
     function wait(ms){ return new Promise(r=>setTimeout(r, ms)); }
