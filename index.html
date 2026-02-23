@@ -37,7 +37,7 @@
       --tickerH: 34px;
       --footerH: 44px;
 
-      --gap: 22px;
+      --gap: 15px;
     }
 
     *{ box-sizing:border-box; }
@@ -821,8 +821,9 @@
     function init(){
       els.count.textContent = `${state.all.length} قناة`;
       renderList(state.all);
-      const last = state.all.find(c=>c.id===state.lastId) || state.all[0];
-      if(last) play(last);
+     // ✅ لا تشغّل قناة تلقائيًا حتى ما يطيح التطبيق إذا الرابط طافي
+      els.nowTitle.textContent = "اختار قناة";
+      els.nowSub.textContent = "اضغط على قناة من القائمة للتشغيل";
 
       els.video.addEventListener("error", ()=>{
         showErr("صار خطأ بالتشغيل. احتمال الرابط محجوب/منتهي أو يحتاج Token/CORS.");
