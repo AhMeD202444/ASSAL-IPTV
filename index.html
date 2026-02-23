@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>مكتب عسل IPTV</title>
+
+  <!-- Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* ✅ لون دارك أفتح وأفخم */
+      --bg:#0C111A;                 /* Midnight Slate */
+      --glass: rgba(12,17,26,.76);
+      --card: rgba(255,255,255,.04);
+
+      --stroke: rgba(255,255,255,.15);
+      --stroke2: rgba(255,255,255,.10);
+
+      --text:#EEF3FF;
+      --muted: rgba(238,243,255,.70);
+
+      /* ألوان راقية */
+      --gold: rgba(214,179,103,.98);
+      --cyan: rgba(86, 230, 255,.98);
+      --pink: rgba(255, 122, 214,.92);
+      --violet: rgba(144, 120, 255,.92);
+
+      --r:18px;
+      --r2:14px;
+      --font:"Cairo", system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+
+      --headerH: 50px;
+      --tickerH: 34px;
+      --footerH: 44px;
+
+      --gap: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x:hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .allow-select{ user-select:text; }
+
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.14;
+      mix-blend-mode: overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+    }
+
+    /* ===== Header ===== */
+    .header{
+      position: fixed;
+      top:0; left:0; right:0;
+      height: var(--headerH);
+      z-index: 60;
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--stroke2);
+      display:flex;
+      align-items:center;
+    }
+    .headerInner{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 0 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    /* ✅ لوغو جديد (سداسي + قطرة عسل) مع نفس التأثير */
+    .logo{
+      width:34px; height:34px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      transform: translateZ(0);
+      box-shadow:
+        0 12px 34px rgba(0,0,0,.48),
+        0 0 0 1px rgba(214,179,103,.10) inset;
+    }
+    .logo:before{
+      content:"";
+      position:absolute;
+      inset:-22px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(214,179,103,.38), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(86,230,255,.22), transparent 58%);
+      animation: orbit 3.4s ease-in-out infinite;
+    }
+    @keyframes orbit{
+      0%   { transform: translate(-10px,-8px) rotate(0deg); opacity:.78; }
+      50%  { transform: translate(10px,8px) rotate(10deg);  opacity:1; }
+      100% { transform: translate(-10px,-8px) rotate(0deg); opacity:.78; }
+    }
+    .logo:after{
+      content:"";
+      position:absolute;
+      top:-70%;
+      left:-45%;
+      width: 60%;
+      height: 240%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      transform: rotate(25deg);
+      animation: sweep 2.7s ease-in-out infinite;
+      opacity:.9;
+    }
+    @keyframes sweep{
+      0%   { transform: translateX(-120%) rotate(25deg); }
+      55%  { transform: translateX(230%)  rotate(25deg); }
+      100% { transform: translateX(230%)  rotate(25deg); }
+    }
+
+    .logoSvg{
+      position:relative;
+      z-index:2;
+      width:22px; height:22px;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100% { transform: translateY(0) scale(1); opacity:.92; }
+      50%     { transform: translateY(-.6px) scale(1.03); opacity:1; }
+    }
+
+    .title{
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 70vw;
+    }
+
+    /* ===== أيقونات الهيدر (أجمل + ملونة) ===== */
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+    .iconBtn{
+      width:30px; height:30px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      padding:0;
+
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      touch-action: manipulation;
+
+      transition: transform .10s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+      box-shadow: 0 10px 26px rgba(0,0,0,.34);
+      position: relative;
+      overflow:hidden;
+    }
+    .iconBtn:active{ transform: scale(.97); }
+    .iconBtn:hover{
+      background: rgba(255,255,255,.055);
+      border-color: rgba(255,255,255,.20);
+    }
+
+    /* لمعة خفيفة داخل زر */
+    .iconBtn:before{
+      content:"";
+      position:absolute;
+      inset:-18px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+    }
+
+    .icon{
+      width:18px; height:18px;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,.25));
+    }
+
+    /* ألوان أجمل لكل أيقونة */
+    .icBack{
+      fill: url(#gBack);
+    }
+    .icReload{
+      fill: url(#gReload);
+    }
+
+    /* ===== Ticker ===== */
+    .ticker{
+      position: fixed;
+      top: var(--headerH);
+      left:0; right:0;
+      height: var(--tickerH);
+      z-index: 55;
+      background: rgba(12,17,26,.66);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--stroke2);
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+    }
+    .tickerInner{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 0 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      overflow:hidden;
+    }
+    .tickerTag{
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 11px;
+      font-weight: 900;
+      background: rgba(255,255,255,.04);
+      color: rgba(238,243,255,.90);
+    }
+    .tickerRail{
+      position:relative;
+      flex:1;
+      overflow:hidden;
+      height: 18px;
+    }
+    .tickerMove{
+      position:absolute;
+      right: 0;
+      white-space: nowrap;
+      will-change: transform;
+      animation: marquee 24s linear infinite;
+      font-size: 11px;
+      color: rgba(238,243,255,.80);
+    }
+    .tickerMove span{ display:inline-block; padding: 0 12px; }
+    .dot{
+      display:inline-block;
+      width: 5px; height: 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(238,243,255,.30);
+      vertical-align: middle;
+      margin: 0 10px;
+    }
+    @keyframes marquee{
+      0%   { transform: translateX(-10%); }
+      100% { transform: translateX(110%); }
+    }
+
+    /* ===== Footer ===== */
+    .footer{
+      position: fixed;
+      bottom:0; left:0; right:0;
+      height: var(--footerH);
+      z-index: 60;
+      background: var(--glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid var(--stroke2);
+      display:flex;
+      align-items:center;
+    }
+    .footerInner{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 0 14px;
+      font-size: 11px;
+      color: rgba(238,243,255,.66);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+
+    /* ===== Main + فصل الحاويات ===== */
+    main{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding:
+        calc(var(--headerH) + var(--tickerH) + 14px)
+        14px
+        calc(var(--footerH) + 14px);
+      display:grid;
+    }
+
+    .split{
+      display:grid;
+      gap: var(--gap);
+      align-items:start;
+    }
+
+    .card{
+      border: 1px solid var(--stroke2);
+      border-radius: var(--r);
+      background: var(--card);
+      overflow:hidden;
+      box-shadow: 0 18px 70px rgba(0,0,0,.38);
+    }
+
+    /* Player */
+    .playerHead{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--stroke2);
+    }
+    .nowTitle{
+      font-weight: 900;
+      font-size: 14px;
+      line-height:1.25;
+    }
+    .nowSub{
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(238,243,255,.70);
+      line-height:1.65;
+      word-break: break-word;
+    }
+    .videoWrap{ padding: 12px; }
+    .videoBox{
+      border: 1px solid var(--stroke2);
+      border-radius: var(--r);
+      overflow:hidden;
+      background:#000;
+      position:relative;
+    }
+    video{
+      width:100%;
+      height: min(44vh, 420px);
+      display:block;
+      background:#000;
+    }
+
+    .err{
+      position:absolute; inset:0;
+      display:none;
+      place-items:center;
+      padding: 12px;
+      background: rgba(0,0,0,.62);
+      color:#fff;
+    }
+    .err.show{ display:grid; }
+    .errBox{
+      width: 100%;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 12px;
+      background: rgba(255,255,255,.06);
+      font-size: 11px;
+      line-height:1.7;
+    }
+    .errBox b{ display:block; margin-bottom:6px; }
+
+    /* List */
+    .listHead{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--stroke2);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: rgba(238,243,255,.72);
+      font-size: 11px;
+    }
+    .list{
+      padding: 12px;
+      display:grid;
+      gap:10px;
+    }
+    .row{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.03);
+      padding: 12px;
+      cursor:pointer;
+      display:grid;
+      grid-template-columns: 52px 1fr;
+      gap:12px;
+      align-items:center;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .row:hover{
+      transform: translateY(-1px);
+      border-color: rgba(214,179,103,.22);
+      background: rgba(255,255,255,.045);
+    }
+    .row:active{ transform: translateY(0px) scale(.995); }
+
+    .ava{
+      width:52px; height:52px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      display:grid; place-items:center;
+      overflow:hidden;
+      font-weight: 900;
+      color: rgba(214,179,103,.92);
+    }
+    .ava img{ width:100%; height:100%; object-fit:cover; }
+
+    .nm{
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 52ch;
+    }
+    .mt{
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(238,243,255,.70);
+      line-height:1.6;
+      word-break: break-word;
+    }
+
+    @media (min-width: 940px){
+      .split{ grid-template-columns: 1.05fr .95fr; }
+      .playerSticky{
+        position: sticky;
+        top: calc(var(--headerH) + var(--tickerH) + 14px);
+      }
+    }
+
+    /* ===== Modal Reload (نفس اللي قبل) ===== */
+    .modal{
+      position: fixed;
+      inset:0;
+      z-index: 200;
+      display:none;
+      place-items:center;
+      padding: 18px;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .modal.show{ display:grid; }
+
+    .modalCard{
+      width: min(520px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(12,17,26,.90);
+      box-shadow: 0 30px 120px rgba(0,0,0,.70);
+      overflow:hidden;
+    }
+    .modalTop{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modalTitle{ font-weight: 900; font-size: 14px; }
+    .modalSub{
+      margin-top:4px;
+      font-size: 11px;
+      color: rgba(238,243,255,.70);
+      line-height:1.6;
+    }
+    .closeX{
+      width:30px; height:30px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      display:grid; place-items:center;
+      cursor:pointer;
+      padding:0;
+      user-select:none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .10s ease;
+    }
+    .closeX:active{ transform: scale(.97); }
+    .closeX svg{ width:16px; height:16px; stroke: rgba(238,243,255,.88); }
+
+    .modalBody{ padding: 12px 14px 14px; }
+
+    .steps{ display:grid; gap:10px; margin: 10px 0 12px; }
+    .step{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 16px;
+      padding: 10px 10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .badge{
+      width:26px; height:26px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      display:grid; place-items:center;
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(255,255,255,.90);
+      background: rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    .stepTxt{
+      min-width:0;
+      font-size: 11px;
+      color: rgba(238,243,255,.76);
+      line-height:1.55;
+    }
+    .step.on{
+      border-color: rgba(214,179,103,.22);
+      background: rgba(214,179,103,.06);
+    }
+    .step.on .badge{
+      border-color: rgba(214,179,103,.30);
+      color: rgba(214,179,103,.95);
+      box-shadow: 0 0 18px rgba(214,179,103,.14);
+    }
+    .progressWrap{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      height: 10px;
+      overflow:hidden;
+    }
+    .progressBar{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(214,179,103,.95), rgba(86,230,255,.80));
+      transition: width .35s ease;
+    }
+    .modalHint{
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(238,243,255,.68);
+      line-height:1.7;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .logo:before, .logo:after, .logoSvg, .tickerMove { animation: none !important; }
+      .progressBar{ transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="headerInner">
+      <div class="brand">
+        <div class="logo" aria-label="شعار مكتب عسل">
+          <!-- لوغو SVG: سداسي + قطرة -->
+          <svg class="logoSvg" viewBox="0 0 24 24" aria-hidden="true">
+            <defs>
+              <linearGradient id="lgHoney" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="rgba(214,179,103,1)"/>
+                <stop offset="1" stop-color="rgba(255,214,140,1)"/>
+              </linearGradient>
+              <linearGradient id="lgAqua" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(86,230,255,1)"/>
+                <stop offset="1" stop-color="rgba(120,180,255,1)"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Hex -->
+            <path d="M12 2.2l7.2 4.2v11.2L12 21.8 4.8 17.6V6.4L12 2.2z"
+                  fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)" stroke-width="1.2"/>
+
+            <!-- Honey drop -->
+            <path d="M12 6.3c1.6 2 3.3 3.9 3.3 6a3.3 3.3 0 1 1-6.6 0c0-2.1 1.7-4 3.3-6z"
+                  fill="url(#lgHoney)"/>
+
+            <!-- tiny shine -->
+            <path d="M10.4 12.1c.1-1 .7-2 1.6-3" fill="none" stroke="url(#lgAqua)" stroke-width="1.2" stroke-linecap="round" opacity=".55"/>
+          </svg>
+        </div>
+        <div class="title allow-select">مكتب عسل IPTV</div>
+      </div>
+
+      <!-- SVG defs للأيقونات الملونة -->
+      <svg width="0" height="0" style="position:absolute">
+        <defs>
+          <linearGradient id="gBack" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(86,230,255,1)"/>
+            <stop offset="1" stop-color="rgba(144,120,255,1)"/>
+          </linearGradient>
+          <linearGradient id="gReload" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(214,179,103,1)"/>
+            <stop offset="1" stop-color="rgba(255,122,214,1)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="actions" aria-label="أزرار الهيدر">
+        <!-- رجوع (أيقونة Filled/Modern) -->
+        <button class="iconBtn" id="goBack" aria-label="رجوع">
+          <svg class="icon icBack" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.7 4.9c.5.5.5 1.3 0 1.8L8.4 11h12.4c.7 0 1.2.6 1.2 1.2s-.5 1.2-1.2 1.2H8.4l4.3 4.3c.5.5.5 1.3 0 1.8s-1.3.5-1.8 0L4.4 13c-.5-.5-.5-1.3 0-1.8L10.9 4.9c.5-.5 1.3-.5 1.8 0z"/>
+          </svg>
+        </button>
+
+        <!-- Reload (أيقونة Filled/Modern) -->
+        <button class="iconBtn" id="openReload" aria-label="إعادة تحميل">
+          <svg class="icon icReload" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 4a8 8 0 0 1 7.2 4.5c.3.6 0 1.3-.6 1.6-.6.3-1.3 0-1.6-.6A5.6 5.6 0 1 0 17 14c.3-.6 1-.9 1.6-.6.6.3.9 1 .6 1.6A8 8 0 1 1 12 4z"/>
+            <path d="M20.7 4.8c.3.3.4.7.3 1.1l-.9 4.4c-.1.6-.7 1-1.3.9l-4.4-.9c-.4-.1-.8-.4-.9-.9s.2-1 .6-1.2l1.5-.7c-.9-1-2.2-1.6-3.6-1.6-1 0-2 .3-2.8.8-.6.3-1.3.2-1.7-.4-.3-.6-.2-1.3.4-1.7C8.9 4.5 10.4 4 12 4c2.2 0 4.2 1 5.6 2.7l.6-1.2c.2-.4.6-.6 1-.6.2 0 .6.1.9.3z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker" aria-label="شريط إعلاني">
+    <div class="tickerInner">
+      <div class="tickerTag">ميزات</div>
+      <div class="tickerRail">
+        <div class="tickerMove" id="tickerText">
+          <span>تشغيل سريع للقنوات</span><i class="dot"></i>
+          <span>واجهة دارك راقية ومريحة للعين</span><i class="dot"></i>
+          <span>مناسبة لكل أجهزة الهواتف</span><i class="dot"></i>
+          <span>تصميم ثابت ومرتب</span><i class="dot"></i>
+          <span>تشغيل HLS (m3u8) عند توفر الدعم</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="split">
+      <!-- Player -->
+      <section class="card playerSticky">
+        <div class="playerHead">
+          <div class="nowTitle allow-select" id="nowTitle">اختار قناة</div>
+          <div class="nowSub allow-select" id="nowSub">اضغط على قناة من القائمة للتشغيل</div>
+        </div>
+        <div class="videoWrap">
+          <div class="videoBox">
+            <video id="video" controls playsinline></video>
+            <div class="err" id="err">
+              <div class="errBox">
+                <b>تعذر التشغيل</b>
+                <div id="errMsg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- List -->
+      <section class="card">
+        <div class="listHead">
+          <div class="allow-select">القنوات</div>
+          <div class="allow-select" id="count">0 قناة</div>
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footerInner allow-select">
+      جميع الحقوق محفوظة مكتب عسل @ 2026
+    </div>
+  </div>
+
+  <!-- Modal Reload -->
+  <div class="modal" id="reloadModal" role="dialog" aria-modal="true" aria-label="إعادة تحميل">
+    <div class="modalCard">
+      <div class="modalTop">
+        <div>
+          <div class="modalTitle">إعادة تحميل التطبيق</div>
+          <div class="modalSub">راح ننفّذ خطوات سريعة لضمان تحديث نظيف.</div>
+        </div>
+        <button class="closeX" id="closeModal" aria-label="إغلاق">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modalBody">
+        <div class="steps">
+          <div class="step" id="s1"><div class="badge">1</div><div class="stepTxt">حفظ آخر قناة وتشغيلها تلقائيًا بعد التحديث.</div></div>
+          <div class="step" id="s2"><div class="badge">2</div><div class="stepTxt">تفريغ المشغل الحالي وتجهيز جلسة جديدة.</div></div>
+          <div class="step" id="s3"><div class="badge">3</div><div class="stepTxt">تحديث الصفحة الآن…</div></div>
+        </div>
+
+        <div class="progressWrap" aria-label="شريط تقدم">
+          <div class="progressBar" id="pbar"></div>
+        </div>
+
+        <div class="modalHint">ملاحظة: إذا عندك بث متوقف، التحديث يساعد يرجّع الاتصال بشكل أفضل.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    /* =========================================================
+       ✅✅✅ هنا تحط روابطك فقط
+       ========================================================= */
+    const CHANNELS = [
+      { id:"n1", name:"News One",  group:"أخبار",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/news1.m3u8" },
+      { id:"s1", name:"Sport Max", group:"رياضة",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/sport1.m3u8" },
+      { id:"m1", name:"Movies HD", group:"أفلام",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies1.m3u8" },
+      { id:"k1", name:"Kids Zone", group:"أطفال",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids1.m3u8" }
+    ];
+
+    const $ = (id)=>document.getElementById(id);
+
+    const els = {
+      nowTitle: $("nowTitle"),
+      nowSub: $("nowSub"),
+      video: $("video"),
+      list: $("list"),
+      count: $("count"),
+      err: $("err"),
+      errMsg: $("errMsg"),
+
+      goBack: $("goBack"),
+      openReload: $("openReload"),
+
+      reloadModal: $("reloadModal"),
+      closeModal: $("closeModal"),
+      s1: $("s1"), s2: $("s2"), s3: $("s3"),
+      pbar: $("pbar")
+    };
+
+    els.goBack.addEventListener("click", (e)=>{
+      e.preventDefault();
+      window.location.href = "https://ahmed202444.github.io/Assal---Office---App/";
+    });
+
+    els.openReload.addEventListener("click", (e)=>{
+      e.preventDefault();
+      openReloadModal();
+    });
+
+    els.closeModal.addEventListener("click", (e)=>{
+      e.preventDefault();
+      closeReloadModal();
+    });
+
+    els.reloadModal.addEventListener("click", (e)=>{
+      if(e.target === els.reloadModal) closeReloadModal();
+    });
+
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && els.reloadModal.classList.contains("show")){
+        closeReloadModal();
+      }
+    });
+
+    function openReloadModal(){
+      els.reloadModal.classList.add("show");
+      runReloadSteps();
+    }
+    function closeReloadModal(){
+      els.reloadModal.classList.remove("show");
+      resetReloadUI();
+    }
+    function resetReloadUI(){
+      [els.s1, els.s2, els.s3].forEach(x=>x.classList.remove("on"));
+      els.pbar.style.width = "0%";
+    }
+    async function runReloadSteps(){
+      resetReloadUI();
+      els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(500);
+      els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(600);
+      els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(650);
+      window.location.reload();
+    }
+    function wait(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+    let hls = null;
+
+    const state = {
+      all: normalize(CHANNELS),
+      current: null,
+      lastId: localStorage.getItem("iptv_last_id") || ""
+    };
+
+    init();
+
+    function init(){
+      els.count.textContent = `${state.all.length} قناة`;
+      renderList(state.all);
+      const last = state.all.find(c=>c.id===state.lastId) || state.all[0];
+      if(last) play(last);
+
+      els.video.addEventListener("error", ()=>{
+        showErr("صار خطأ بالتشغيل. احتمال الرابط محجوب/منتهي أو يحتاج Token/CORS.");
+      });
+    }
+
+    function renderList(list){
+      els.list.innerHTML = list.map(c=>`
+        <div class="row" data-id="${esc(c.id)}" title="${esc(c.name)}">
+          <div class="ava">
+            ${c.logo ? `<img src="${escA(c.logo)}" alt="">` : `<span>${initials(c.name)}</span>`}
+          </div>
+          <div style="min-width:0;">
+            <div class="nm allow-select">${esc(c.name)}</div>
+            <div class="mt allow-select">${esc(c.group)} • ${esc(host(c.url))}</div>
+          </div>
+        </div>
+      `).join("");
+
+      els.list.querySelectorAll(".row").forEach(row=>{
+        row.addEventListener("click", ()=>{
+          const id = row.getAttribute("data-id");
+          const ch = state.all.find(x=>x.id===id);
+          if(ch) play(ch);
+        });
+      });
+    }
+
+    function play(ch){
+      state.current = ch;
+      hideErr();
+
+      els.nowTitle.textContent = ch.name;
+      els.nowSub.textContent = `${ch.group} • ${host(ch.url)}`;
+      localStorage.setItem("iptv_last_id", ch.id);
+
+      if(hls){ hls.destroy(); hls = null; }
+      const url = ch.url;
+
+      if(els.video.canPlayType("application/vnd.apple.mpegurl")){
+        els.video.src = url;
+        els.video.play().catch(()=> showErr("اضغط تشغيل يدويًا — ممكن autoplay ممنوع."));
+        return;
+      }
+
+      if(window.Hls && Hls.isSupported()){
+        hls = new Hls({ enableWorker:true, lowLatencyMode:true });
+        hls.on(Hls.Events.ERROR, (_, data)=>{
+          if(data?.fatal) showErr(`HLS خطأ: ${data.type} / ${data.details}`);
+        });
+        hls.loadSource(url);
+        hls.attachMedia(els.video);
+        hls.on(Hls.Events.MANIFEST_PARSED, ()=>{
+          els.video.play().catch(()=> showErr("اضغط تشغيل يدويًا — ممكن autoplay ممنوع."));
+        });
+        return;
+      }
+
+      els.video.src = url;
+      els.video.play().catch(()=> showErr("المتصفح ما يدعم هذا النوع من البث."));
+    }
+
+    function showErr(msg){
+      els.errMsg.textContent = msg;
+      els.err.classList.add("show");
+    }
+    function hideErr(){
+      els.err.classList.remove("show");
+      els.errMsg.textContent = "";
+    }
+
+    function normalize(list){
+      return (list||[]).map((c,i)=>({
+        id: c.id || `ch_${i}_${slug(c.name||"ch")}`,
+        name: c.name || "بدون اسم",
+        group: c.group || "بدون مجموعة",
+        logo: c.logo || "",
+        url: c.url || ""
+      })).filter(x=>x.url);
+    }
+
+    function host(u){ try{ return new URL(u, location.href).host; }catch{ return "—"; } }
+    function initials(name){
+      const s=(name||"").trim();
+      if(!s) return "TV";
+      const parts=s.split(/\s+/);
+      const a=parts[0]?.[0]||"ت";
+      const b=parts[1]?.[0]||"ف";
+      return (a+b).toUpperCase();
+    }
+    function slug(s){ return (s||"").toLowerCase().replace(/\\s+/g,"-").replace(/[^\\w\\-ء-ي]/g,"").slice(0,60); }
+    function esc(s){ return (s??"").toString().replace(/[&<>\"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+    function escA(s){ return esc(s).replace(/\"/g,"&quot;"); }
+  </script>
+</body>
+</html>
