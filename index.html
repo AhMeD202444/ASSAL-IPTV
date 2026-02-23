@@ -38,6 +38,9 @@
       --footerH: 44px;
 
       --gap: 15px;
+
+      /* ✅✅✅ Safe Area للفوتر (حتى يصير فوق أزرار النظام) */
+      --safeB: max(env(safe-area-inset-bottom), 12px);
     }
 
     *{ box-sizing:border-box; }
@@ -283,11 +286,13 @@
       100% { transform: translateX(110%); }
     }
 
-    /* ===== Footer ===== */
+    /* ===== Footer (✅✅✅ Safe Area) ===== */
     .footer{
       position: fixed;
-      bottom:0; left:0; right:0;
-      height: var(--footerH);
+      left:0; right:0;
+      bottom: 0;
+      height: calc(var(--footerH) + var(--safeB));
+      padding-bottom: var(--safeB);
       z-index: 60;
       background: var(--glass);
       backdrop-filter: blur(14px);
@@ -297,6 +302,7 @@
       align-items:center;
     }
     .footerInner{
+      min-height: var(--footerH);
       width: min(980px, 100%);
       margin: 0 auto;
       padding: 0 14px;
@@ -308,14 +314,14 @@
       text-align:center;
     }
 
-    /* ===== Main + فصل الحاويات ===== */
+    /* ===== Main + فصل الحاويات (✅✅✅ Safe Area) ===== */
     main{
       width: min(980px, 100%);
       margin: 0 auto;
       padding:
         calc(var(--headerH) + var(--tickerH) + 14px)
         14px
-        calc(var(--footerH) + 14px);
+        calc(var(--footerH) + var(--safeB) + 14px);
       display:grid;
     }
 
@@ -821,7 +827,7 @@
     function init(){
       els.count.textContent = `${state.all.length} قناة`;
       renderList(state.all);
-     // ✅ لا تشغّل قناة تلقائيًا حتى ما يطيح التطبيق إذا الرابط طافي
+      // ✅ لا تشغّل قناة تلقائيًا حتى ما يطيح التطبيق إذا الرابط طافي
       els.nowTitle.textContent = "اختار قناة";
       els.nowSub.textContent = "اضغط على قناة من القائمة للتشغيل";
 
@@ -914,7 +920,7 @@
       const b=parts[1]?.[0]||"ف";
       return (a+b).toUpperCase();
     }
-    function slug(s){ return (s||"").toLowerCase().replace(/\\s+/g,"-").replace(/[^\\w\\-ء-ي]/g,"").slice(0,60); }
+    function slug(s){ return (s||"").toLowerCase().replace(/\s+/g,"-").replace(/[^\w\-ء-ي]/g,"").slice(0,60); }
     function esc(s){ return (s??"").toString().replace(/[&<>\"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
     function escA(s){ return esc(s).replace(/\"/g,"&quot;"); }
   </script>
