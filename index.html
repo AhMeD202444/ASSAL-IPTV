@@ -770,8 +770,6 @@
       { id:"mbc DRAMA", name:"MBC DRAMA PLUS",  group:"MBC", logo:"", url:"https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8" },
       { id:"mbc MASR", name:"MBC MASR",  group:"MBC", logo:"", url:"https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr/956eac069c78a35d47245db6cdbb1575/index.m3u8" },
       { id:"mbc MASR 2", name:"MBC MASR 2",  group:"MBC", logo:"", url:"https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-2/754931856515075b0aabf0e583495c68/index.m3u8" },
-
-
       { id:"mbc BOLYWOOD", name:"MBC BOLYWOOD",  group:"MBC", logo:"", url:"https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-bollywood/546eb40d7dcf9a209255dd2496903764/index.m3u8" },
 
 
@@ -858,10 +856,10 @@
     }
     async function runReloadSteps(){
       resetReloadUI();
-      els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(500);
-      els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(600);
-      els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(650);
-      window.location.reload();
+      els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(900);
+      els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(1100);
+      els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(1200);
+      window.location.href = window.location.pathname + "?v=" + Date.now();
     }
     function wait(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
