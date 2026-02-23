@@ -861,7 +861,7 @@
      els.s1.classList.add("on"); els.pbar.style.width = "30%"; await wait(900);
      els.s2.classList.add("on"); els.pbar.style.width = "65%"; await wait(1100);
      els.s3.classList.add("on"); els.pbar.style.width = "100%"; await wait(1200);
-     window.location.replace(window.location.href.split('#')[0].split('?')[0] + "?v=" + Date.now());
+    window.location.reload();
     }
     function wait(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
