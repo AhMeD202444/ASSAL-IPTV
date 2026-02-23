@@ -199,8 +199,6 @@
       background: rgba(255,255,255,.055);
       border-color: rgba(255,255,255,.20);
     }
-
-    /* لمعة خفيفة داخل زر */
     .iconBtn:before{
       content:"";
       position:absolute;
@@ -209,19 +207,12 @@
       opacity:.9;
       pointer-events:none;
     }
-
     .icon{
       width:18px; height:18px;
       filter: drop-shadow(0 6px 16px rgba(0,0,0,.25));
     }
-
-    /* ألوان أجمل لكل أيقونة */
-    .icBack{
-      fill: url(#gBack);
-    }
-    .icReload{
-      fill: url(#gReload);
-    }
+    .icBack{ fill: url(#gBack); }
+    .icReload{ fill: url(#gReload); }
 
     /* ===== Ticker ===== */
     .ticker{
@@ -402,11 +393,60 @@
       color: rgba(238,243,255,.72);
       font-size: 11px;
     }
+
+    /* ✅ عنوان + سهم رجوع داخل حاوية القنوات */
+    .listHeadLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .miniBtn{
+      width:28px; height:28px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      padding:0;
+      user-select:none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .10s ease, background .2s ease, border-color .2s ease;
+      box-shadow: 0 10px 26px rgba(0,0,0,.26);
+      overflow:hidden;
+    }
+    .miniBtn:active{ transform: scale(.97); }
+    .miniBtn:hover{ background: rgba(255,255,255,.055); border-color: rgba(255,255,255,.20); }
+    .miniBtn svg{ width:16px; height:16px; fill: rgba(238,243,255,.92); }
+
+    .listTitle{
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 46vw;
+    }
+
+    /* ✅ حركة انتقال للمحتوى */
     .list{
       padding: 12px;
       display:grid;
       gap:10px;
+      transition: opacity .22s ease, transform .22s ease;
+      will-change: opacity, transform;
     }
+    .list.out{
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .list.in{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .row{
       border: 1px solid rgba(255,255,255,.10);
       border-radius: var(--r2);
@@ -439,6 +479,7 @@
       color: rgba(214,179,103,.92);
     }
     .ava img{ width:100%; height:100%; object-fit:cover; }
+    .ava svg{ width:26px; height:26px; }
 
     .nm{
       font-weight: 900;
@@ -454,6 +495,12 @@
       color: rgba(238,243,255,.70);
       line-height:1.6;
       word-break: break-word;
+    }
+
+    /* ✅ تمييز بسيط لمجاميع */
+    .row.group:hover{
+      border-color: rgba(86,230,255,.22);
+      background: rgba(86,230,255,.05);
     }
 
     @media (min-width: 940px){
@@ -579,6 +626,7 @@
     @media (prefers-reduced-motion: reduce){
       .logo:before, .logo:after, .logoSvg, .tickerMove { animation: none !important; }
       .progressBar{ transition: none !important; }
+      .list{ transition: none !important; }
     }
   </style>
 </head>
@@ -690,10 +738,20 @@
       <!-- List -->
       <section class="card">
         <div class="listHead">
-          <div class="allow-select">القنوات</div>
-          <div class="allow-select" id="count">0 قناة</div>
+          <div class="listHeadLeft">
+            <!-- ✅ سهم الرجوع داخل حاوية القنوات -->
+            <button class="miniBtn" id="groupBack" aria-label="رجوع للمجاميع" style="display:none;">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.9 5.2c.5.5.5 1.3 0 1.8L11.9 10h8.6c.7 0 1.2.6 1.2 1.2s-.5 1.2-1.2 1.2h-8.6l3 3c.5.5.5 1.3 0 1.8s-1.3.5-1.8 0L7.4 12.5c-.5-.5-.5-1.3 0-1.8l5.7-5.5c.5-.5 1.3-.5 1.8 0z"/>
+              </svg>
+            </button>
+
+            <div class="allow-select listTitle" id="listTitle">المجاميع</div>
+          </div>
+
+          <div class="allow-select" id="count">0</div>
         </div>
-        <div class="list" id="list"></div>
+        <div class="list in" id="list"></div>
       </section>
     </div>
   </main>
@@ -739,13 +797,47 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     /* =========================================================
-       ✅✅✅ هنا تحط روابطك فقط
+       ✅✅✅ هنا تحط روابطك فقط (سويت مجاميع + 4 قنوات وهمية لكل مجموعة)
        ========================================================= */
+
+    const GROUPS = [
+      { key:"MBC",       label:"MBC" },
+      { key:"MOVIES HD", label:"MOVIES HD" },
+      { key:"ISLAMIC",   label:"ISLAMIC" },
+      { key:"KIDS",      label:"KIDS" },
+      { key:"ARABIC",    label:"ARABIC" }
+    ];
+
     const CHANNELS = [
-      { id:"n1", name:"News One",  group:"أخبار",  logo:"", url:"https://jrtv-live.ercdn.net/jordanhd/jordanhd.m3u8" },
-      { id:"s1", name:"Sport Max", group:"رياضة",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/sport1.m3u8" },
-      { id:"m1", name:"Movies HD", group:"أفلام",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies1.m3u8" },
-      { id:"k1", name:"Kids Zone", group:"أطفال",  logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids1.m3u8" }
+      // ===== MBC (4 قنوات وهمية) =====
+      { id:"mbc1", name:"MBC 1",  group:"MBC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/mbc1.m3u8" },
+      { id:"mbc2", name:"MBC 2",  group:"MBC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/mbc2.m3u8" },
+      { id:"mbc3", name:"MBC 3",  group:"MBC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/mbc3.m3u8" },
+      { id:"mbc4", name:"MBC 4",  group:"MBC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/mbc4.m3u8" },
+
+      // ===== MOVIES HD =====
+      { id:"mov1", name:"Movies HD 1", group:"MOVIES HD", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies1.m3u8" },
+      { id:"mov2", name:"Movies HD 2", group:"MOVIES HD", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies2.m3u8" },
+      { id:"mov3", name:"Movies HD 3", group:"MOVIES HD", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies3.m3u8" },
+      { id:"mov4", name:"Movies HD 4", group:"MOVIES HD", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/movies4.m3u8" },
+
+      // ===== ISLAMIC =====
+      { id:"isl1", name:"Islamic 1", group:"ISLAMIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/islamic1.m3u8" },
+      { id:"isl2", name:"Islamic 2", group:"ISLAMIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/islamic2.m3u8" },
+      { id:"isl3", name:"Islamic 3", group:"ISLAMIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/islamic3.m3u8" },
+      { id:"isl4", name:"Islamic 4", group:"ISLAMIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/islamic4.m3u8" },
+
+      // ===== KIDS =====
+      { id:"kid1", name:"Kids 1", group:"KIDS", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids1.m3u8" },
+      { id:"kid2", name:"Kids 2", group:"KIDS", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids2.m3u8" },
+      { id:"kid3", name:"Kids 3", group:"KIDS", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids3.m3u8" },
+      { id:"kid4", name:"Kids 4", group:"KIDS", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/kids4.m3u8" },
+
+      // ===== ARABIC =====
+      { id:"arb1", name:"Arabic 1", group:"ARABIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/arabic1.m3u8" },
+      { id:"arb2", name:"Arabic 2", group:"ARABIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/arabic2.m3u8" },
+      { id:"arb3", name:"Arabic 3", group:"ARABIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/arabic3.m3u8" },
+      { id:"arb4", name:"Arabic 4", group:"ARABIC", logo:"", url:"https://PUT-YOUR-IPTV-LINK-HERE/arabic4.m3u8" }
     ];
 
     const $ = (id)=>document.getElementById(id);
@@ -765,7 +857,10 @@
       reloadModal: $("reloadModal"),
       closeModal: $("closeModal"),
       s1: $("s1"), s2: $("s2"), s3: $("s3"),
-      pbar: $("pbar")
+      pbar: $("pbar"),
+
+      groupBack: $("groupBack"),
+      listTitle: $("listTitle")
     };
 
     els.goBack.addEventListener("click", (e)=>{
@@ -819,14 +914,15 @@
     const state = {
       all: normalize(CHANNELS),
       current: null,
-      lastId: localStorage.getItem("iptv_last_id") || ""
+      lastId: localStorage.getItem("iptv_last_id") || "",
+
+      view: "groups",        // "groups" | "channels"
+      currentGroup: ""
     };
 
     init();
 
     function init(){
-      els.count.textContent = `${state.all.length} قناة`;
-      renderList(state.all);
       // ✅ لا تشغّل قناة تلقائيًا حتى ما يطيح التطبيق إذا الرابط طافي
       els.nowTitle.textContent = "اختار قناة";
       els.nowSub.textContent = "اضغط على قناة من القائمة للتشغيل";
@@ -834,10 +930,90 @@
       els.video.addEventListener("error", ()=>{
         showErr("صار خطأ بالتشغيل. احتمال الرابط محجوب/منتهي أو يحتاج Token/CORS.");
       });
+
+      els.groupBack.addEventListener("click", (e)=>{
+        e.preventDefault();
+        goGroups();
+      });
+
+      renderGroups();
     }
 
-    function renderList(list){
-      els.list.innerHTML = list.map(c=>`
+    /* =========================
+       ✅ Views: Groups / Channels
+       ========================= */
+
+    function setAnimOut(){
+      els.list.classList.remove("in");
+      els.list.classList.add("out");
+    }
+    function setAnimIn(){
+      els.list.classList.remove("out");
+      els.list.classList.add("in");
+    }
+    function swapContent(html){
+      setAnimOut();
+      setTimeout(()=>{
+        els.list.innerHTML = html;
+        requestAnimationFrame(()=> setAnimIn());
+      }, 140);
+    }
+
+    function renderGroups(){
+      state.view = "groups";
+      state.currentGroup = "";
+      els.groupBack.style.display = "none";
+      els.listTitle.textContent = "المجاميع";
+
+      const html = GROUPS.map(g=>{
+        const count = state.all.filter(x=>x.group===g.key).length || 0;
+        return `
+          <div class="row group" data-group="${esc(g.key)}" title="${esc(g.label)}">
+            <div class="ava">${groupIcon(g.key)}</div>
+            <div style="min-width:0;">
+              <div class="nm allow-select">${esc(g.label)}</div>
+              <div class="mt allow-select">${count} قنوات • اضغط للدخول</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      swapContent(html);
+      els.count.textContent = `${GROUPS.length} مجاميع`;
+
+      setTimeout(()=>{
+        els.list.querySelectorAll(".row.group").forEach(row=>{
+          row.addEventListener("click", ()=>{
+            const g = row.getAttribute("data-group");
+            goGroup(g);
+          });
+        });
+      }, 160);
+    }
+
+    function goGroup(groupKey){
+      state.view = "channels";
+      state.currentGroup = groupKey;
+
+      els.groupBack.style.display = "grid";
+      els.listTitle.textContent = groupKey;
+
+      const list = state.all.filter(x=>x.group===groupKey);
+      els.count.textContent = `${list.length} قناة`;
+
+      renderChannelRows(list);
+    }
+
+    function goGroups(){
+      renderGroups();
+    }
+
+    /* =========================
+       ✅ Channels list (نفس الشكل الموجود)
+       ========================= */
+
+    function renderChannelRows(list){
+      const html = list.map(c=>`
         <div class="row" data-id="${esc(c.id)}" title="${esc(c.name)}">
           <div class="ava">
             ${c.logo ? `<img src="${escA(c.logo)}" alt="">` : `<span>${initials(c.name)}</span>`}
@@ -849,14 +1025,22 @@
         </div>
       `).join("");
 
-      els.list.querySelectorAll(".row").forEach(row=>{
-        row.addEventListener("click", ()=>{
-          const id = row.getAttribute("data-id");
-          const ch = state.all.find(x=>x.id===id);
-          if(ch) play(ch);
+      swapContent(html);
+
+      setTimeout(()=>{
+        els.list.querySelectorAll(".row").forEach(row=>{
+          row.addEventListener("click", ()=>{
+            const id = row.getAttribute("data-id");
+            const ch = state.all.find(x=>x.id===id);
+            if(ch) play(ch);
+          });
         });
-      });
+      }, 160);
     }
+
+    /* =========================
+       ✅ Player (كما هو)
+       ========================= */
 
     function play(ch){
       state.current = ch;
@@ -901,6 +1085,10 @@
       els.errMsg.textContent = "";
     }
 
+    /* =========================
+       Helpers
+       ========================= */
+
     function normalize(list){
       return (list||[]).map((c,i)=>({
         id: c.id || `ch_${i}_${slug(c.name||"ch")}`,
@@ -909,6 +1097,75 @@
         logo: c.logo || "",
         url: c.url || ""
       })).filter(x=>x.url);
+    }
+
+    function groupIcon(key){
+      // ✅ أيقونات SVG داخل الكود (بدون استيراد)
+      const common = `style="filter: drop-shadow(0 8px 18px rgba(0,0,0,.30));"`;
+      if(key==="MBC"){
+        return `<svg ${common} viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="gMbc" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="rgba(86,230,255,1)"/>
+              <stop offset="1" stop-color="rgba(144,120,255,1)"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#gMbc)" d="M12 2.6l8.2 4.7v9.4L12 21.4 3.8 16.7V7.3L12 2.6z"/>
+          <path fill="rgba(255,255,255,.22)" d="M7.2 10.2h9.6v1.7H7.2z"/>
+          <path fill="rgba(255,255,255,.22)" d="M7.2 13.1h6.8v1.7H7.2z"/>
+        </svg>`;
+      }
+      if(key==="MOVIES HD"){
+        return `<svg ${common} viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="gMov" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="rgba(214,179,103,1)"/>
+              <stop offset="1" stop-color="rgba(255,122,214,1)"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#gMov)" d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+          <path fill="rgba(0,0,0,.35)" d="M10 9l6 3-6 3V9z"/>
+          <path fill="rgba(255,255,255,.22)" d="M7 6h3v2H7zM14 6h3v2h-3zM7 16h3v2H7zM14 16h3v2h-3z"/>
+        </svg>`;
+      }
+      if(key==="ISLAMIC"){
+        return `<svg ${common} viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="gIsl" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="rgba(86,230,255,1)"/>
+              <stop offset="1" stop-color="rgba(214,179,103,1)"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#gIsl)" d="M12 2a8.8 8.8 0 1 0 8.8 8.8A8.8 8.8 0 0 0 12 2z"/>
+          <path fill="rgba(0,0,0,.28)" d="M13.7 6.2a4.7 4.7 0 1 0 0 9.4 4.2 4.2 0 0 1-2.6-.9 4.7 4.7 0 0 1 2.6-8.5z"/>
+          <path fill="rgba(255,255,255,.28)" d="M15.9 8.2l.5 1.2 1.2.1-.9.8.3 1.2-1.1-.6-1.1.6.3-1.2-.9-.8 1.2-.1z"/>
+        </svg>`;
+      }
+      if(key==="KIDS"){
+        return `<svg ${common} viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="gKid" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="rgba(255,122,214,1)"/>
+              <stop offset="1" stop-color="rgba(86,230,255,1)"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#gKid)" d="M12 3.2c4.8 0 8.8 3.6 8.8 8.1S16.8 20.8 12 20.8 3.2 16 3.2 11.3 7.2 3.2 12 3.2z"/>
+          <path fill="rgba(0,0,0,.25)" d="M8.2 12.2a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2zm7.6 0a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2z"/>
+          <path fill="rgba(0,0,0,.25)" d="M8.6 14.2c1.1 1.4 2.2 2 3.4 2s2.3-.6 3.4-2c.3-.4.2-1-.2-1.3-.4-.3-1-.2-1.3.2-.7.9-1.3 1.2-1.9 1.2s-1.2-.3-1.9-1.2c-.3-.4-.9-.5-1.3-.2-.4.3-.5.9-.2 1.3z"/>
+        </svg>`;
+      }
+      // ARABIC
+      return `<svg ${common} viewBox="0 0 24 24" aria-hidden="true">
+        <defs>
+          <linearGradient id="gAr" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(144,120,255,1)"/>
+            <stop offset="1" stop-color="rgba(214,179,103,1)"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gAr)" d="M12 2.4l9 5v9.2l-9 5-9-5V7.4l9-5z"/>
+        <path fill="rgba(255,255,255,.26)" d="M7.2 14.6c1.4 1.2 3.1 1.8 4.8 1.8 1.7 0 3.4-.6 4.8-1.8v-1.6c-1.4 1.2-3.1 1.8-4.8 1.8-1.7 0-3.4-.6-4.8-1.8z"/>
+        <path fill="rgba(255,255,255,.26)" d="M7.2 11.7c1.4 1.2 3.1 1.8 4.8 1.8 1.7 0 3.4-.6 4.8-1.8v-1.6c-1.4 1.2-3.1 1.8-4.8 1.8-1.7 0-3.4-.6-4.8-1.8z"/>
+      </svg>`;
     }
 
     function host(u){ try{ return new URL(u, location.href).host; }catch{ return "—"; } }
